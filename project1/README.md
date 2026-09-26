@@ -44,6 +44,7 @@ student_data_128/
 | `dataset.py` | CSV와 이미지를 읽는 `PlantDataset`, 전처리/데이터 증강 `get_transforms` |
 | `model.py` | CNN 모델 `MultiTaskCNN` (**여러분이 고칠 파일**) |
 | `train.py` | 학습(`train`), 평가(`evaluate`), 결과 출력(`print_report`) |
+| `check_submission.py` | **제출 전 점검.** 채점 서버와 같은 방식으로 검사 (5장 참고) |
 
 ---
 
@@ -109,10 +110,38 @@ python train.py --eval_only      # 저장된 best_model.pt 를 불러와 valid �
 | **제출 횟수** | 학번당 **하루 10회** (한국 시간 기준, 채점에 실패한 제출도 포함) |
 | **제출물** | `model.py` + `best_model.pt` |
 
-1. 리더보드의 **[제출]** 페이지에서 학번(필수), 이름 또는 닉네임(선택), 두 파일을 올립니다.
-2. 서버가 공개되지 않은 **test 세트**로 자동 채점합니다(보통 수십 초). 채점이 끝나면 내 제출 페이지에 점수가 나타납니다.
-3. 채점에 실패하면 이유가 표시됩니다. 아래 "서버에서 채점되려면 꼭 지켜야 할 것"을 확인하세요.
-4. **[순위]** 페이지에서 전체 순위를 볼 수 있습니다.
+1. **제출 전에 `python check_submission.py`로 점검합니다** (아래 참고).
+2. 리더보드의 **[제출]** 페이지에서 학번(필수), 이름 또는 닉네임(선택), 두 파일을 올립니다.
+3. 서버가 공개되지 않은 **test 세트**로 자동 채점합니다(보통 수십 초). 채점이 끝나면 내 제출 페이지에 점수가 나타납니다.
+4. 채점에 실패하면 이유가 표시됩니다. 아래 "서버에서 채점되려면 꼭 지켜야 할 것"을 확인하세요.
+5. **[순위]** 페이지에서 전체 순위를 볼 수 있습니다.
+
+### 제출 전 점검: `check_submission.py`
+채점 서버와 **같은 방식으로** `model.py`와 `best_model.pt`를 검사하고, 서버와 같은 전처리로 valid 점수를 계산합니다.
+**모든 항목이 `[통과]`이면 제출해도 채점됩니다.** 서버처럼 CPU로만 실행합니다.
+
+```
+python check_submission.py                                   # model.py, best_model.pt 가 project1 폴더에 있을 때
+python check_submission.py --model my_model.py --weights my.pt   # 다른 파일을 검사할 때
+```
+
+검사 항목: 파일 크기 → 허용되지 않은 import → `MultiTaskCNN` 클래스 → 인자 없이 생성 → 파라미터 2M 이하
+→ 가중치 불러오기 → 출력 형식 `(B, 3), (B, 2)` → valid 점수
+
+```
+[통과] 파일 크기: model.py 1.2KB, best_model.pt 0.10MB (제한 10MB)
+[통과] import: torch, torchvision, 파이썬 기본 라이브러리만 사용
+[통과] model.py 에 MultiTaskCNN 클래스가 있음
+[통과] MultiTaskCNN() 을 인자 없이 만들 수 있음
+[통과] 모델 크기: 파라미터 23,909개 + 버퍼 0개 = 23,909개 (제한 2,000,000개)
+[통과] best_model.pt 를 model.py 구조에 맞게 불러옴
+[통과] 출력 형식: (B, 3), (B, 2)  (valid 2284장 예측 완료)
+------------------------------------------------------------
+ valid 점수 (채점 서버와 같은 전처리)
+   평균 Macro-F1      : 0.7259
+ 모든 검사 통과! 리더보드에 model.py 와 best_model.pt 를 제출하세요.
+```
+하나라도 `[실패]`가 나오면 그 이유가 표시되고 점검이 멈춥니다. 고친 뒤 다시 실행하세요.
 
 ### Public / Private 점수
 test 세트는 **public**(절반)과 **private**(나머지 절반)으로 나뉘어 있습니다.
