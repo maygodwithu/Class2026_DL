@@ -85,6 +85,18 @@ python train.py --eval_only      # 저장된 best_model.pt 를 불러와 valid �
 
 학습 설정(epoch 수, 학습률, 데이터 증강 등)은 `train.py`, `dataset.py`에서 자유롭게 바꿔도 됩니다.
 
+### 제한 사항
+| 항목 | 제한 |
+|---|---|
+| **사전학습(pretrained) 모델** | **사용 금지.** ImageNet 등으로 미리 학습된 가중치를 가져오지 말고, 주어진 데이터로 **처음부터 직접 학습**하세요 |
+| **모델 크기** | 파라미터 **2,000,000개(2M) 이하** |
+| **`best_model.pt` 파일 크기** | **10MB 이하** |
+| **사용 가능한 라이브러리** | `torch`, `torchvision`만 (채점 서버에 이 둘만 설치되어 있음) |
+
+- 파라미터 수는 `train.py`를 실행하면 처음에 `파라미터 수: ...`로 출력됩니다. 제출 전에 확인하세요.
+  (채점 서버는 BatchNorm 통계 같은 버퍼도 함께 세기 때문에 조금 더 크게 셀 수 있습니다. 여유를 두세요.)
+- 참고: 제공된 baseline은 약 2.4만 개, 4블록 + BatchNorm 정도의 CNN은 약 40만 개입니다.
+
 ---
 
 ## 5. 제출과 채점
@@ -128,6 +140,8 @@ score = (작물 종류 Macro-F1 + 건강 상태 Macro-F1) / 2
 - 입력: `(B, 3, 128, 128)` 이미지
 - 출력: **`(crop_logits, health_logits)`** 두 개를 반환, 각각 `(B, 3)`, `(B, 2)`
 - 평가할 때 전처리는 `dataset.py`의 `get_transforms(train=False)` (ToTensor + Normalize(0.5, 0.5))를 그대로 사용
+- 파라미터 2M 이하, `best_model.pt` 10MB 이하, `torch`/`torchvision` 외 라이브러리 사용 불가 (위 "제한 사항" 참고)
+- `best_model.pt`는 `torch.save(model.state_dict(), ...)`로 저장한 파일 (`train.py`가 저장하는 그대로)
 
 ---
 
