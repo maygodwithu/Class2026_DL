@@ -1,0 +1,11 @@
+{
+  "crop_label": {
+    "0": "Apple",
+    "1": "Grape",
+    "2": "Tomato"
+  },
+  "health_label": {
+    "0": "Healthy",
+    "1": "Diseased"
+  }
+}
