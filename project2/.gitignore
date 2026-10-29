@@ -1,0 +1,8 @@
+# 루트 .gitignore 의 *.pt 규칙에서 제공 가중치 두 개만 예외
+!G.pt
+!classifier.pt
+
+# 실행 결과
+z.pt
+compare.png
+worst.png

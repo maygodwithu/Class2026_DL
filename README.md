@@ -5,5 +5,6 @@
 | 폴더 | 내용 |
 |---|---|
 | [project1](project1) | 식물 잎 사진으로 작물 종류와 건강 상태를 동시에 분류하는 CNN |
+| [project2](project2) | 학습된 GAN(DCGAN)으로 주어진 얼굴 사진을 그리는 z 찾기 |
 
 각 프로젝트 폴더의 README를 참고하세요.
